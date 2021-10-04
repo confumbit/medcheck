@@ -58,29 +58,6 @@ export default function App() {
 
     // Initialize config and update medicine quantities
     db.transaction((txn) => {
-      console.log("i ran ran ran \n\n\n\n")
-      txn.executeSql(
-        "UPDATE medicines \
-        SET quantity=quantity\
-        -(select breakfastCheck from checklist where checklist.name=medicines.name)\
-        -(select lunchCheck from checklist where checklist.name=medicines.name)\
-        -(select dinnerCheck from checklist where checklist.name=medicines.name)",
-        [],
-        (txn, res) => {
-          console.log("Updated quantites of stock based on the previous day's checks.");
-          getItems()
-          checkCritical()
-        },
-        (err) => console.log(err)
-      );
-      txn.executeSql(
-        `UPDATE checklist SET breakfastCheck=0, lunchCheck=0, dinnerCheck=0`,
-        [],
-        (txn, res) => {
-          console.log("Cleared all medicine checks.");
-        },
-        (err) => console.log(err)
-      );
       txn.executeSql(
         "SELECT * FROM config",
         [],
@@ -112,7 +89,19 @@ export default function App() {
               -(select dinnerCheck from checklist where checklist.name=medicines.name)",
               [],
               (txn, res) => {
-                console.log("Updated quantites of stock based on the previous day's checks.");
+                console.log(
+                  "Updated quantites of stock based on the previous day's checks."
+                );
+                getItems();
+                checkCritical();
+              },
+              (err) => console.log(err)
+            );
+            txn.executeSql(
+              `UPDATE checklist SET breakfastCheck=0, lunchCheck=0, dinnerCheck=0`,
+              [],
+              (txn, res) => {
+                console.log("Cleared all medicine checks.");
               },
               (err) => console.log(err)
             );
@@ -206,7 +195,8 @@ export default function App() {
         }=? WHERE name=?`,
         [value, name],
         (txn, res) => {
-          console.log(`Updated row in checklist, Changed ${name} to ${value}`); },
+          console.log(`Updated row in checklist, Changed ${name} to ${value}`);
+        },
         (err) => console.log(err)
       );
     });
