@@ -15,9 +15,13 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.hitendalmia.medcheck",
+      "buildNumber": "1.0.0"
     },
     "android": {
+      "package": "com.hitendalmia.medcheck",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./app/assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
