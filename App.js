@@ -166,7 +166,7 @@ export default function App() {
         "DELETE FROM medicines WHERE name=?",
         [name],
         (txn, res) => {
-          console.log(`${name} row deleted from checklist.`);
+          console.log(`${name} row deleted from medicines.`);
         },
         (err) => console.log(err)
       );
@@ -191,12 +191,11 @@ export default function App() {
         }=? WHERE name=?`,
         [value, name],
         (txn, res) => {
-          console.log(`Updated row in checklist, Changed ${name} to ${value}`);
-        },
+          console.log(`Updated row in checklist, Changed ${name} to ${value}`); },
         (err) => console.log(err)
       );
     });
-    checkCritical()
+    checkCritical();
     getItems();
   };
 
@@ -204,10 +203,12 @@ export default function App() {
     const db = SQLite.openDatabase("medcheck.db");
     db.transaction((txn) => {
       txn.executeSql(
-        `UPDATE checklist SET ${
-          listName.toLowerCase() + "Check"
-        }=? WHERE (SELECT ${listName.toLowerCase()} FROM medicines JOIN checklist ON \
-        medicines.name=checklist.name WHERE medicines.afterfood=?)=1;`,
+        `UPDATE checklist \
+        SET ${listName.toLowerCase() + "Check"}=? \
+        WHERE EXISTS(SELECT * FROM medicines WHERE medicines.name=checklist.name) \
+        AND (SELECT afterfood FROM medicines WHERE medicines.name=checklist.name)=? \
+        AND (SELECT ${listName.toLowerCase()} FROM medicines WHERE medicines.name=checklist.name)=1
+        `,
         [value, afterfood],
         (txn, res) => {
           console.log(
@@ -319,7 +320,14 @@ export default function App() {
   let options = {};
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: (config ? config.theme : false)
+          ? darkTheme.colors.background
+          : lightTheme.colors.background,
+      }}
+    >
       <NavigationContainer
         theme={(config ? config.theme : false) ? darkTheme : lightTheme}
       >
