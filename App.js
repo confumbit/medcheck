@@ -65,7 +65,7 @@ export default function App() {
           console.log(_array);
           if (_array.length === 0) {
             txn.executeSql(
-              `INSERT INTO config VALUES (0, ?, 919440089794)`,
+              `INSERT INTO config VALUES (0, ?, 919248020161)`,
               [new Date().getDate()],
               (txn, res) => {
                 console.log("Initialized config table.");
